@@ -15,6 +15,14 @@ $app->get('/', function () use ($app) {
     return $app->version();
 });
 
-$app->post('/', ['uses' => 'MainController@main']);
+$app->post('/validasimhs', ['uses' => 'MainController@main']);
+
+$app->group(['prefix' => 'api'], function($app) {
+    $app->post('/auth', 'App\Http\Controllers\AuthController@postlogin');
+});
+
+$app->group(['prefix' => 'api', 'middleware' => 'jwt.auth'], function($app) {
+    $app->get('/', 'App\Http\Controllers\AuthController@postlogin');
+});
 
 $app->get('/user', ['as' => 'get_user' , 'uses' => 'UserController@getUser', 'middleware' => 'throttle:2,1']);

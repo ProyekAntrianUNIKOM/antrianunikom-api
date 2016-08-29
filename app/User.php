@@ -22,7 +22,7 @@ class User extends Model implements
     protected $table = 'user';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'name', 'email',
+        'name', 'email', 'password',
     ];
 
     /**
