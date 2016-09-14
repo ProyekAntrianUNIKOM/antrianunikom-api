@@ -16,4 +16,20 @@ class MahasiswaController extends Controller
         return response()->json(['status'=>400,'message'=>'Failed','result'=>[]]);
       }
   }
+
+  public function tambah(Request $request)
+  {
+    $rfid = $request->input('no_rfid');
+    $nim = $request->input('nim');
+    $nama = $request->input('nama');
+    $jurusan = $request->input('jurusan');
+    $add = DB::insert("insert into mahasiswa set no_rfid='$rfid',nim='$nim',nama='$nama',jurusan='$jurusan'");
+    $cek = DB::select("select * from mahasiswa where nim='$nim'");
+    if($add)
+    {
+      return response()->json(['status'=>200,'message'=>'success','result'=>[]]);
+    }else {
+      return response()->json(['status'=>400,'message'=>'error','result'=>[]]);
+    }
+  }
 }

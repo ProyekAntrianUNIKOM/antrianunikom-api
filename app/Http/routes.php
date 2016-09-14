@@ -34,4 +34,10 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
   $app->get('temp/{id}','AntrianController@getTempByid');
   $app->get('button','AntrianController@button');
   $app->get('ambilakhir','AntrianController@ambilakhir');
+  $app->post('tambahmahasiswa','MahasiswaController@tambah');
+  $app->get('ambil','TestingController@ambil');
+  $app->get('photo','PhotoController@getall');
+  $app->post('photo','PhotoController@tambah');
+  $app->get('video','VideoController@getvideo');
+
 });

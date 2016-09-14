@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__.'/../vendor/autoload.php';
-
 try {
     (new Dotenv\Dotenv(__DIR__.'/../'))->load();
 } catch (Dotenv\Exception\InvalidPathException $e) {
@@ -18,13 +17,12 @@ try {
 | application as an "IoC" container and router for this framework.
 |
 */
-
 $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
+ //Dotenv::load(__DIR__.'/../');
  $app->withFacades();
-
  $app->withEloquent();
 
 /*

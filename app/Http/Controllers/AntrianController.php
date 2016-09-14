@@ -5,10 +5,10 @@ use DateTime;
 use App\Library\QueueHandler;
 use SplQueue;
 use Illuminate\Http\Request;
+
 class AntrianController extends Controller
 {
-    public $antrian;
-    var $q;
+
     /**
      * Create a new controller instance.
      *
@@ -16,9 +16,8 @@ class AntrianController extends Controller
      */
     public function __construct()
     {
-        global $q;
-        $antrian = array();
-        $q = new SplQueue();
+
+        
     }
 
 
@@ -72,12 +71,64 @@ class AntrianController extends Controller
         $noantrian = $request->input('noantrian');
         $counter_file = "counter.txt";
         $fp = fopen($counter_file,"w");
-        fputs($fp,$noantrian);
+        fputs($fp,(int)$noantrian);
         fclose($fp);  
         $insert = app('db')->insert("insert into antrian(no_antrian,no_rfid,no_loket,tanggal_antrian,waktu_antrian)
                                     values('$noantrian','$rfid','$no_loket','$tanggal','$waktu')");
         if($insert)
         {
+          /* tulis dan buka koneksi ke printer */
+        //$p = printer_open("Canon iP2700 series");
+        $p = false; 
+        if($p)
+        {
+          $var_magin_left=40;
+          printer_set_option($p, PRINTER_MODE, "RAW"); 
+
+          //then the width
+          printer_set_option( $p,PRINTER_RESOLUTION_Y, 940);
+          printer_start_doc($p);
+          printer_start_page($p);
+          printer_set_option($p, PRINTER_PAPER_FORMAT, PRINTER_FORMAT_CUSTOM );
+          printer_set_option($p,PRINTER_PAPER_WIDTH,15);
+          printer_set_option($p,PRINTER_PAPER_LENGTH,50);
+
+          $font = printer_create_font("Arial", 90, 50, PRINTER_FW_MEDIUM, false, false, false, 0);
+          printer_select_font($p, $font);
+          printer_draw_text($p, "ANTRIAN UNIKOM",300,0);
+          //printer_draw_text($p, "",250,20);
+
+          //$pen = printer_create_pen(PRINTER_PEN_SOLID, 1, "000000");
+          //printer_select_pen($p, $pen);
+          $font = printer_create_font("Arial", 80, 40, PRINTER_FW_MEDIUM, false, false, false, 0);
+          printer_select_font($p, $font);
+          //printer_draw_line($p, $var_magin_left, 50, 700, 50);
+          printer_draw_text($p, "No Antrian Anda:", 340, 80);
+
+          $font = printer_create_font("Arial", 300, 80, PRINTER_FW_MEDIUM, false, false, false, 0);
+          printer_select_font($p, $font);
+          printer_draw_text($p, "$noantrian", 420, 160);
+
+          $font = printer_create_font("Arial", 40, 30, PRINTER_FW_NORMAL, false, false, false, 0);
+          printer_select_font($p, $font);
+          printer_draw_text($p, "Waktu Antrian :", $var_magin_left, 500);
+          printer_draw_text($p, date("Y/m/d H:i:s"),$var_magin_left,580);
+          printer_draw_line($p, $var_magin_left, 630, 1300, 630);
+          printer_draw_text($p, "\"Harap nomor antrian ini dibawa ke counter\"", $var_magin_left, 680);
+          printer_draw_text($p, "Terimakasih Atas Kunjungan Anda", 100,750);
+
+
+          printer_delete_font($font);
+
+          printer_end_page($p);
+          printer_end_doc($p);
+
+          //printer_start_doc($p);
+          //printer_start_page($p);
+          printer_close($p);
+          
+
+        }
           $hasil['status']=201;
           $hasil['message']='Antrian berhasil ditambahkan';
           $hasil['result']=$noantrian;
@@ -145,10 +196,10 @@ class AntrianController extends Controller
 
         /* tulis dan buka koneksi ke printer */
         $p = printer_open("Canon iP2700 series");
-        if($p)
+        /*if($p)
         {
           $var_magin_left=40;
-          printer_set_option($p, PRINTER_MODE, "RAW"); // mode disobek (gak ngegulung kertas)
+          printer_set_option($p, PRINTER_MODE, "RAW"); 
 
           //then the width
           printer_set_option( $p,PRINTER_RESOLUTION_Y, 940);
@@ -162,7 +213,7 @@ class AntrianController extends Controller
           printer_select_font($p, $font);
           printer_draw_text($p, "ANTRIAN UNIKOM",300,0);
           //printer_draw_text($p, "",250,20);
-          // Header Bon
+
           //$pen = printer_create_pen(PRINTER_PEN_SOLID, 1, "000000");
           //printer_select_pen($p, $pen);
           $font = printer_create_font("Arial", 80, 40, PRINTER_FW_MEDIUM, false, false, false, 0);
@@ -193,6 +244,7 @@ class AntrianController extends Controller
           printer_start_page($p);
           printer_close($p);
         }
+        */
         $hasil['status']=201;
         $hasil['message']='Antrian berhasil ditambahkan';
         $hasil['result']=$noantrian;
@@ -207,37 +259,45 @@ class AntrianController extends Controller
        //$antrian = new QueueHandler;
        //$antrian->tambah(12);
        //return $antrian->hallo();
-       global $q;
-       $q->push(1);
-       $q->push(2);
-       $q->push(3);
-       print_r($q);
+       return $this->antrian->ambil();
 
+    }
+
+    public function add()
+    {
+       $this->antrian->tambah(5);
+       
     }
 
     public function simpan(Request $request){
       $id_antrian = $request->input('id_antrian');
       $operator   = $request->input('operator');
+      $loket      = $request->input('loket');
+      $sekarang = app('db')->select("select * from antrian where id_antrian='$id_antrian'");
+      $no_antrian= $sekarang[0]->no_antrian;
+      $id_antrian = $sekarang[0]->id_antrian;
+      $update = app('db')->update("update temp set no_antrian='$no_antrian',id_antrian='$id_antrian' where no_loket='$loket'");
       $query = app('db')->insert("insert into antrian_terlayani set id_antrian='$id_antrian',operator='$operator'");
       if($query){
         $update = app('db')->update("update antrian set status='1' where id_antrian='$id_antrian'");
         if($update){
-          return response()->json(['status'=>200,'message'=>'success','result'=>[]]);
+          $data['status']=200; 
+          $data['message']='success';
+          $data['result']=$no_antrian;
+          return response()->json($data);
         }else{
-          return response()->json(['status'=>400,'message'=>'error','result'=>[]]);
+          return response()->json(['status'=>400,'message'=>'error 1','result'=>$update]);
         }
       }else{
-        return response()->json(['status'=>400,'message'=>'error','result'=>[]]);
+        return response()->json(['status'=>400,'message'=>'error 2','result'=>$query]);
       }
     }
 
     public function ambil_antrian($id){
       $result = app('db')->select("select * from antrian where status='0' and no_loket='$id'");
-
       if($result){
-         $no_antrian= $result[0]->no_antrian;
+        $no_antrian= $result[0]->no_antrian;
         $id_antrian = $result[0]->id_antrian;
-        $update = app('db')->update("update temp set no_antrian='$no_antrian',id_antrian='$id_antrian' where no_loket='$id'");
         $data['status']=200;
         $data['message']='success';
         $data['result']=$result;
@@ -249,6 +309,7 @@ class AntrianController extends Controller
         return response()->json($data);
       }
     }
+    
     public function loket($id)
     {
 
