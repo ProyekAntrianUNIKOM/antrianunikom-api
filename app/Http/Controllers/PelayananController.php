@@ -60,5 +60,28 @@ class PelayananController extends Controller
             return response()->json(['status'=>400,'message'=>'error','result'=>[]]);
         }
     }
+
+    public function operator()
+    {
+        $query = app('db')->select("select * from operator natural join loket");
+        if($query)
+        {
+            return response()->json(['status'=>200,'message'=>'success','result'=>$query]);
+        }
+        else {
+            return response()->json(['status'=>400,'message'=>'error','result'=>[]]);
+        }
+    }
+    public function getLoket()
+    {
+        $query = app('db')->select("select * from loket");
+        if($query)
+        {
+            return response()->json(['status'=>200,'message'=>'success','result'=>$query]);
+        }
+        else {
+            return response()->json(['status'=>400,'message'=>'error','result'=>[]]);
+        }
+    }
     //
 }

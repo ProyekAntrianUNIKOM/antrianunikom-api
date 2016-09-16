@@ -17,6 +17,17 @@ class MahasiswaController extends Controller
       }
   }
 
+  public function getAll()
+  {
+    $query = DB::select("select * from mahasiswa");
+    if($query){
+        return response()->json(['status'=>200,'message'=>'Success','result'=>$query]);
+    }
+    else {
+      return response()->json(['status'=>400,'message'=>'Failed','result'=>[]]);
+    }
+  }
+
   public function tambah(Request $request)
   {
     $rfid = $request->input('no_rfid');
