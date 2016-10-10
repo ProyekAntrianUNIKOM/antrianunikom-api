@@ -7,7 +7,6 @@ try {
 } catch (Dotenv\Exception\InvalidPathException $e) {
     //
 }
-
 /*
 |--------------------------------------------------------------------------
 | Create The Application
@@ -61,6 +60,8 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -74,7 +75,7 @@ $app->singleton(
 // $app->routeMiddleware([
 //     'auth' => App\Http\Middleware\Authenticate::class,
 // ]);
-
+$app->middleware('palanik\lumen\Middleware\LumenCors');
 $app->routeMiddleware([
     'throttle' => App\Http\Middleware\ThrottleRequests::class,
     'jwt.auth'    => Tymon\JWTAuth\Middleware\GetUserFromToken::class,
