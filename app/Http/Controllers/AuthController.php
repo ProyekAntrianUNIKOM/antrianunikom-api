@@ -18,55 +18,55 @@ class AuthController  extends Controller {
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function postLogin(Request $request)
-    {
-        $username = $request->input('username');
-        $password = $request->input('password');
+     public function postLogin(Request $request)
+     {
+         $username = $request->input('username');
+         $password = $request->input('password');
 
-        $results = DB::select("SELECT * FROM user where username = ?",[$username]);
-        if(!$results){
-            return response()->json(['status'=>400,'message'=>'Username not found','result'=>[]]);
-        }
-        //return response()->json(['hashedPassword'=>$password, 'passworddb'=>$results[0]->password]);
-        if(Hash::check($password,$results[0]->password)){
-            return response()->json(['status'=>200,'message'=>'Success','result'=>$results]);
-        }else{
-            return response()->json(['status'=>400,'message'=>'Wrong password','result'=>[]]);
-        }
+         $results = DB::select("SELECT operator.*,loket.nama_loket FROM operator inner join loket on loket.no_loket=operator.no_loket where username = ?",[$username]);
+         if(!$results){
+             return response()->json(['status'=>400,'message'=>'Username not found','result'=>[]]);
+         }
+         //return response()->json(['hashedPassword'=>$password, 'passworddb'=>$results[0]->password]);
+         if(Hash::check($password,$results[0]->password)){
+             return response()->json(['status'=>200,'message'=>'Success','result'=>$results]);
+         }else{
+             return response()->json(['status'=>400,'message'=>'Wrong password','result'=>[]]);
+         }
 
-    }
+     }
 
-    public function authadmin(Request $request)
-    {
-        $username = $request->input('username');
-        $password = $request->input('password');
+     public function authadmin(Request $request)
+     {
+         $username = $request->input('username');
+         $password = $request->input('password');
 
-        $results = DB::select("SELECT * FROM admin where username = ?",[$username]);
-        if(!$results){
-            return response()->json(['status'=>400,'message'=>'Username not found','result'=>[]]);
-        }
-        //return response()->json(['hashedPassword'=>$password, 'passworddb'=>$results[0]->password]);
-        if(Hash::check($password,$results[0]->password)){
-            return response()->json(['status'=>200,'message'=>'Success','result'=>$results]);
-        }else{
-            return response()->json(['status'=>400,'message'=>'Wrong password','result'=>[]]);
-        }
+         $results = DB::select("SELECT * FROM admin where username = ?",[$username]);
+         if(!$results){
+             return response()->json(['status'=>400,'message'=>'Username not found','result'=>[]]);
+         }
+         //return response()->json(['hashedPassword'=>$password, 'passworddb'=>$results[0]->password]);
+         if(Hash::check($password,$results[0]->password)){
+             return response()->json(['status'=>200,'message'=>'Success','result'=>$results]);
+         }else{
+             return response()->json(['status'=>400,'message'=>'Wrong password','result'=>[]]);
+         }
 
-    }
+     }
 
-    public function register(Request $request)
-    {
+     public function register(Request $request)
+     {
 
-    }
+     }
 
-    /**
-     * Get the needed authorization credentials from the request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    protected function getCredentials(Request $request)
-    {
-        return $request->only('email', 'password');
-    }
+     /**
+      * Get the needed authorization credentials from the request.
+      *
+      * @param  \Illuminate\Http\Request  $request
+      * @return array
+      */
+     protected function getCredentials(Request $request)
+     {
+         return $request->only('email', 'password');
+     }
 }

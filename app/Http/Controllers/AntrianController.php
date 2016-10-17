@@ -276,8 +276,9 @@ class AntrianController extends Controller
       $sekarang = app('db')->select("select * from antrian where id_antrian='$id_antrian'");
       $no_antrian= $sekarang[0]->no_antrian;
       $id_antrian = $sekarang[0]->id_antrian;
+      $sekarang=date("Y-m-d H:i:s");
       $update = app('db')->update("update temp set no_antrian='$no_antrian',id_antrian='$id_antrian' where no_loket='$loket'");
-      $query = app('db')->insert("insert into antrian_terlayani set id_antrian='$id_antrian',operator='$operator'");
+      $query = app('db')->insert("insert into antrian_terlayani set id_antrian='$id_antrian',operator='$operator',tanggal_pelayanan='$sekarang'");
       if($query){
         $update = app('db')->update("update antrian set status='1' where id_antrian='$id_antrian'");
         if($update){
