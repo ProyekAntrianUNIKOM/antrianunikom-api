@@ -34,11 +34,13 @@ $app->group(['prefix' => 'api'], function($app) {
     $app->delete('/berita/{id}', 'App\Http\Controllers\BeritaController@deleteData');
     //mahasiswa
     $app->get('/mahasiswa', 'App\Http\Controllers\MahasiswaController@getAll');
+    $app->post('/mahasiswa', 'App\Http\Controllers\MahasiswaController@tambah');
     //banner
     $app->get('/banner', 'App\Http\Controllers\BannerController@getAll');
     $app->post('/banner', 'App\Http\Controllers\BannerController@simpanData');
     $app->get('/banner/{id}', 'App\Http\Controllers\BannerController@detail');
     $app->post('/banner/{id}', 'App\Http\Controllers\BannerController@editData');
+    $app->delete('/banner/{id}', 'App\Http\Controllers\BannerController@deleteData');
     //video
     $app->get('/video', 'App\Http\Controllers\VideoController@getAll');
     $app->post('/video', 'App\Http\Controllers\VideoController@simpanData');

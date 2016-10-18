@@ -110,7 +110,7 @@ class HistoryController extends Controller
         WHERE operator.id_operator = ?",[$id_operator]);
 
       if($tahun && !$bulan && !$hari){
-          $result = DB::select("SELECT antrian.no_antrian,mahasiswa.nama as nama_mahasiswa,tanggal_pelayanan FROM antrian_terlayani
+          $result = DB::select("SELECT antrian.no_antrian,mahasiswa.nama as nama_mahasiswa,mahasiswa.nim,tanggal_pelayanan FROM antrian_terlayani
             INNER JOIN antrian on antrian.id_antrian=antrian_terlayani.id_antrian
             INNER JOIN mahasiswa on antrian.no_rfid=mahasiswa.no_rfid
             WHERE antrian_terlayani.operator = ? AND YEAR(tanggal_pelayanan) = ?",[$id_operator,$tahun]);
@@ -119,7 +119,7 @@ class HistoryController extends Controller
           }
           return response()->json(['status'=>200,'message'=>'Success','nama_loket' => $info[0]->nama_loket,'nama_operator' => $info[0]->nama_operator,'jumlah'=> count($result),'result'=>$result]);
       }elseif($tahun && $bulan && !$hari){
-          $result = DB::select("SELECT antrian.no_antrian,mahasiswa.nama as nama_mahasiswa,loket.nama_loket,operator.nama as nama_operator,tanggal_pelayanan FROM antrian_terlayani
+          $result = DB::select("SELECT antrian.no_antrian,mahasiswa.nama as nama_mahasiswa,mahasiswa.nim,loket.nama_loket,operator.nama as nama_operator,tanggal_pelayanan FROM antrian_terlayani
             INNER JOIN antrian on antrian.id_antrian=antrian_terlayani.id_antrian
             INNER JOIN mahasiswa on antrian.no_rfid=mahasiswa.no_rfid
             INNER JOIN loket on antrian.no_loket=loket.no_loket
@@ -130,7 +130,7 @@ class HistoryController extends Controller
           }
           return response()->json(['status'=>200,'message'=>'Success','nama_loket' => $info[0]->nama_loket,'nama_operator' => $info[0]->nama_operator,'jumlah'=> count($result),'result'=>$result]);
       }elseif($tahun && $bulan && $hari){
-          $result = DB::select("SELECT antrian.no_antrian,mahasiswa.nama as nama_mahasiswa,loket.nama_loket,operator.nama as nama_operator,tanggal_pelayanan FROM antrian_terlayani
+          $result = DB::select("SELECT antrian.no_antrian,mahasiswa.nama as nama_mahasiswa,mahasiswa.nim,loket.nama_loket,operator.nama as nama_operator,tanggal_pelayanan FROM antrian_terlayani
             INNER JOIN antrian on antrian.id_antrian=antrian_terlayani.id_antrian
             INNER JOIN mahasiswa on antrian.no_rfid=mahasiswa.no_rfid
             INNER JOIN loket on antrian.no_loket=loket.no_loket
@@ -141,7 +141,7 @@ class HistoryController extends Controller
           }
           return response()->json(['status'=>200,'message'=>'Success','nama_loket' => $info[0]->nama_loket,'nama_operator' => $info[0]->nama_operator,'jumlah'=> count($result),'result'=>$result]);
       }elseif(!$tahun && !$bulan && !$hari){
-        $result = DB::select("SELECT antrian.no_antrian,mahasiswa.nama as nama_mahasiswa,loket.nama_loket,operator.nama as nama_operator,tanggal_pelayanan FROM antrian_terlayani
+        $result = DB::select("SELECT antrian.no_antrian,mahasiswa.nama as nama_mahasiswa,mahasiswa.nim,loket.nama_loket,operator.nama as nama_operator,tanggal_pelayanan FROM antrian_terlayani
           INNER JOIN antrian on antrian.id_antrian=antrian_terlayani.id_antrian
           INNER JOIN mahasiswa on antrian.no_rfid=mahasiswa.no_rfid
           INNER JOIN loket on antrian.no_loket=loket.no_loket
