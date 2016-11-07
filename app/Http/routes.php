@@ -37,6 +37,7 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
   $app->get('temp/{id}','AntrianController@getTempByid');
   $app->get('button','AntrianController@button');
   $app->get('ambilakhir','AntrianController@ambilakhir');
+  $app->get('cekhari','AntrianController@cekhari');
 
   $app->get('ambil','TestingController@ambil');
   $app->get('photo','PhotoController@getall');
@@ -75,7 +76,7 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
     $app->get('/banner/{id}', 'BannerController@detail');
     $app->post('/banner/{id}', 'BannerController@editData');
     //video
-    
+
     //$app->get('/video', 'VideoController@getAll');
     $app->post('/video', 'VideoController@simpanData');
     $app->post('/video/{id}', 'VideoController@editData');

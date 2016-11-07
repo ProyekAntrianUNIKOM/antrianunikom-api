@@ -33,8 +33,8 @@ class MahasiswaController extends Controller
     $rfid = $request->input('no_rfid');
     $nim = $request->input('nim');
     $nama = $request->input('nama');
-    $jurusan = $request->input('jurusan');
-    $add = DB::insert("insert into mahasiswa set no_rfid='$rfid',nim='$nim',nama='$nama',jurusan='$jurusan'");
+    $jurusan = $request->input('prodi');
+    $add = DB::insert("insert into mahasiswa set no_rfid='$rfid',nim='$nim',nama='$nama',prodi='$jurusan'");
     $cek = DB::select("select * from mahasiswa where nim='$nim'");
     if($add)
     {
