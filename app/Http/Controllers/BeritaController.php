@@ -70,10 +70,13 @@ class BeritaController extends Controller
       return response()->json(['status'=>200,'message'=>'Data Berhasil Disimpan.']);
     }
     public function deleteData($id) {
-      //$dir = '../../../public/img/275644-nodejs_logo.png';
-      //if(!$result[0]->foto = 'default.jpg'){
-        //unlink($dir);
-      //}
+      $poto = DB::select('SELECT foto FROM berita WHERE id_berita=?',[$id]);
+      if(!$poto){
+        return response()->json(['status'=>404,'message'=>'Data tidak ditemukan.']);
+      }
+      $a = '../public/img/'.$poto[0]->foto;
+      unlink($a);
+
       $delete = DB::select('DELETE FROM berita WHERE id_berita=?',[$id]);
       return response()->json(['status'=>200,'message'=>'Data Berhasil Dihapus.']);
     }
@@ -88,6 +91,10 @@ class BeritaController extends Controller
 
       $rand = mt_rand(100000,999999);
       if ($request->hasFile('file')) {
+        //hapus foto sebelumnya
+        $a = '../public/img/'.$oldfile;
+        unlink($a);
+
         $fileName = $rand.'-'.$foto->getClientOriginalName();
         $request->file('file')->move('img', $fileName);
       }else{
@@ -97,6 +104,5 @@ class BeritaController extends Controller
       $save = DB::select('UPDATE berita SET judul=?,isi=?,foto=? WHERE id_berita=?',[$judul,$isi,$fileName,$id]);
 
       return response()->json(['status'=>200,'message'=>'Data Berhasil Diubah.']);
-
     }
 }

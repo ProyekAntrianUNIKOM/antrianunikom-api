@@ -33,14 +33,36 @@ class MahasiswaController extends Controller
     $rfid = $request->input('no_rfid');
     $nim = $request->input('nim');
     $nama = $request->input('nama');
-    $jurusan = $request->input('prodi');
-    $add = DB::insert("insert into mahasiswa set no_rfid='$rfid',nim='$nim',nama='$nama',prodi='$jurusan'");
-    $cek = DB::select("select * from mahasiswa where nim='$nim'");
-    if($add)
+    $prodi = $request->input('prodi');
+    $cek = DB::select("select * from mahasiswa where no_rfid='$rfid'");
+    if($cek)
     {
-      return response()->json(['status'=>200,'message'=>'success','result'=>[]]);
-    }else {
-      return response()->json(['status'=>400,'message'=>'error','result'=>[]]);
+      return response()->json(['status'=>400,'message'=>'Nomor RFID sudah terdaftar.','result'=>[]]);
     }
+    $add = DB::insert("insert into mahasiswa set no_rfid='$rfid',nim='$nim',nama='$nama',prodi='$prodi'");
+
+    return response()->json(['status'=>200,'message'=>'success','result'=>[]]);
+  }
+
+  public function editData(Request $request,$id) {
+
+    $nim = $request->input('nim');
+    $nama = $request->input('nama');
+    $prodi = $request->input('prodi');
+
+    $save = DB::select('UPDATE mahasiswa SET nim=?,nama=?,prodi=? WHERE no_rfid=?',[$nim,$nama,$prodi,$id]);
+
+    return response()->json(['status'=>200,'message'=>'Data Berhasil Diubah.']);
+  }
+
+  public function detail($id){
+    $result = DB::select('SELECT * FROM mahasiswa WHERE no_rfid=?',[$id]);
+    return response()->json(['status'=>200,'message'=>'Success','result'=>$result]);
+  }
+
+  public function deleteData($id) {
+
+    $delete = DB::select('DELETE FROM mahasiswa WHERE no_rfid=?',[$id]);
+    return response()->json(['status'=>200,'message'=>'Data Berhasil Dihapus.']);
   }
 }

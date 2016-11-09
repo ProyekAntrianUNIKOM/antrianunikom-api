@@ -319,7 +319,11 @@ class AntrianController extends Controller
       $nama = $sekarang[0]->nama;
       $prodi = $sekarang[0]->prodi;
       $sekarang=date("Y-m-d H:i:s");
+
+      //update temp
       $update = app('db')->update("update temp set no_antrian='$no_antrian',id_antrian='$id_antrian',nim='$nim',nama='$nama' where no_loket='$loket' or no_loket='5'");
+
+      //simpan antrian ke antrian_terlayani
       $query = app('db')->insert("insert into antrian_terlayani set id_antrian='$id_antrian',operator='$operator',tanggal_pelayanan='$sekarang'");
       if($query){
         $update = app('db')->update("update antrian set status='1' where id_antrian='$id_antrian'");
