@@ -69,15 +69,19 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
     //mahasiswa
     $app->get('mahasiswa','MahasiswaController@getAll');
     $app->post('tambahmahasiswa','MahasiswaController@tambah');
+    $app->post('mahasiswa/{id}','MahasiswaController@editData');
+    $app->get('mahasiswa/{id}','MahasiswaController@detail');
+    $app->delete('mahasiswa/{id}','MahasiswaController@deleteData');
     $app->post('validasimhs', ['uses' => 'MahasiswaController@validasi']);
     //banner
     $app->get('/banner', 'BannerController@getAll');
     $app->post('/banner', 'BannerController@simpanData');
     $app->get('/banner/{id}', 'BannerController@detail');
     $app->post('/banner/{id}', 'BannerController@editData');
+    $app->delete('/banner/{id}', 'BannerController@deleteData');
     //video
 
-    //$app->get('/video', 'VideoController@getAll');
+    $app->get('/video', 'VideoController@getAll');
     $app->post('/video', 'VideoController@simpanData');
     $app->post('/video/{id}', 'VideoController@editData');
     $app->get('/video/{id}', 'VideoController@detail');

@@ -49,10 +49,13 @@ class VideoController extends Controller
       return response()->json(['status'=>200,'message'=>'Data Berhasil Disimpan.']);
     }
     public function deleteData($id) {
-      //$dir = '../../../public/img/275644-nodejs_logo.png';
-      //if(!$result[0]->foto = 'default.jpg'){
-        //unlink($dir);
-      //}
+      $poto = DB::select('SELECT video FROM video WHERE id_video=?',[$id]);
+      if(!$poto){
+        return response()->json(['status'=>404,'message'=>'Data tidak ditemukan.']);
+      }
+      $a = '../public/video/'.$poto[0]->video;
+      unlink($a);
+
       $delete = DB::select('DELETE FROM video WHERE id_video=?',[$id]);
       return response()->json(['status'=>200,'message'=>'Data Berhasil Dihapus.']);
     }
@@ -66,8 +69,12 @@ class VideoController extends Controller
 
       $rand = mt_rand(100000,999999);
       if ($request->hasFile('file')) {
+        //hapus foto sebelumnya
+        $a = '../public/banner/'.$oldfile;
+        unlink($a);
+        
         $fileName = $rand.'-'.$video->getClientOriginalName();
-        $request->file('file')->move('img', $fileName);
+        $request->file('file')->move('video', $fileName);
       }else{
         $fileName = $oldfile;
       }

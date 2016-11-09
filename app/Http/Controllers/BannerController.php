@@ -60,6 +60,10 @@ class BannerController extends Controller
 
       $rand = mt_rand(100000,999999);
       if ($request->hasFile('file')) {
+        //hapus foto sebelumnya
+        $a = '../public/banner/'.$oldfile;
+        unlink($a);
+
         $fileName = $rand.'-'.$foto->getClientOriginalName();
         $request->file('file')->move('banner', $fileName);
       }else{
@@ -69,6 +73,18 @@ class BannerController extends Controller
       $save = DB::select('UPDATE banner SET judul=?,banner_img=? WHERE id_banner=?',[$judul,$fileName,$id]);
 
       return response()->json(['status'=>200,'message'=>'Data Berhasil Diubah.']);
+    }
+
+    public function deleteData($id) {
+      $poto = DB::select('SELECT * FROM banner WHERE id_banner=?',[$id]);
+      if(!$poto){
+        return response()->json(['status'=>404,'message'=>'Data tidak ditemukan.']);
+      }
+      $a = '../public/banner/'.$poto[0]->banner_img;
+      unlink($a);
+
+      $delete = DB::select('DELETE FROM banner WHERE id_banner=?',[$id]);
+      return response()->json(['status'=>200,'message'=>'Data Berhasil Dihapus.']);
     }
 
     public function detail($id){
