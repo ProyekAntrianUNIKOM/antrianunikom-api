@@ -31,6 +31,7 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
 
   $app->post('auth', 'AuthController@postlogin');
   $app->post('register','AuthController@register');
+  $app->get('getakhir/{id}','AntrianController@ambil_antrian_one');
   $app->get('getantrian/{id}','AntrianController@ambil_antrian');
   $app->post('antrian/selesai','AntrianController@simpan');
   $app->get('temp','AntrianController@getAllTemp');
@@ -50,7 +51,9 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
   $app->post('/historyall', 'HistoryController@all');
   $app->post('/historydetail', 'HistoryController@detail');
 
-
+  $app->get('simpan/iot','AntrianController@simpan_iot');
+  $app->post('simpan2','AntrianController@simpan2');
+  
   //history
   $app->get('/history/operator', 'HistoryController@operator');
   $app->get('/history/loket', 'HistoryController@loket');

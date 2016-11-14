@@ -343,6 +343,78 @@ class AntrianController extends Controller
       }
     }
 
+    public function simpan_iot(Request $request){
+      $id_antrian = $_GET['id_antrian'];
+      $operator   = $_GET['operator'];
+      $loket      = $_GET['loket'];
+      $sekarang = app('db')->select("select * from antrian inner join mahasiswa on antrian.no_rfid=mahasiswa.no_rfid where id_antrian='$id_antrian'");
+      $no_antrian= $sekarang[0]->no_antrian;
+      $id_antrian = $sekarang[0]->id_antrian;
+      $nim = $sekarang[0]->nim;
+      $nama = $sekarang[0]->nama;
+      $prodi = $sekarang[0]->prodi;
+      $sekarang=date("Y-m-d H:i:s");
+
+      //update temp
+      $update = app('db')->update("update temp set no_antrian='$no_antrian',id_antrian='$id_antrian',nim='$nim',nama='$nama' where no_loket='$loket' or no_loket='5'");
+
+      //simpan antrian ke antrian_terlayani
+      $query = app('db')->insert("insert into antrian_terlayani set id_antrian='$id_antrian',operator='$operator',tanggal_pelayanan='$sekarang'");
+      if($query){
+        $update = app('db')->update("update antrian set status='1' where id_antrian='$id_antrian'");
+        if($update){
+          $data['status']=200;
+          $data['message']='success';
+          $data['result']=$no_antrian;
+          $data['nim']=$nim;
+          $data['nama']=$nama;
+          $data['prodi']=$prodi;
+          return response()->json($data);
+        }else{
+          return response()->json(['status'=>400,'message'=>'error 1','result'=>$update]);
+        }
+      }else{
+        return response()->json(['status'=>400,'message'=>'error 2','result'=>$query]);
+      }
+    }
+
+    public function simpan2(Request $request){
+      $loket      = $_POST['loket'];
+      $operator   = $_POST['operator'];
+      $akhir      = app('db')->select("select * from antrian where no_loket='$loket' and status='0'");
+      $id_antrian = $akhir[0]->id_antrian;
+
+      $sekarang = app('db')->select("select * from antrian inner join mahasiswa on antrian.no_rfid=mahasiswa.no_rfid where id_antrian='$id_antrian'");
+      $no_antrian= $sekarang[0]->no_antrian;
+      $id_antrian = $sekarang[0]->id_antrian;
+      $nim = $sekarang[0]->nim;
+      $nama = $sekarang[0]->nama;
+      $prodi = $sekarang[0]->prodi;
+      $sekarang=date("Y-m-d H:i:s");
+
+      //update temp
+      $update = app('db')->update("update temp set no_antrian='$no_antrian',id_antrian='$id_antrian',nim='$nim',nama='$nama' where no_loket='$loket' or no_loket='5'");
+
+      //simpan antrian ke antrian_terlayani
+      $query = app('db')->insert("insert into antrian_terlayani set id_antrian='$id_antrian',operator='$operator',tanggal_pelayanan='$sekarang'");
+      if($query){
+        $update = app('db')->update("update antrian set status='1' where id_antrian='$id_antrian'");
+        if($update){
+          $data['status']=200;
+          $data['message']='success';
+          $data['result']=$no_antrian;
+          $data['nim']=$nim;
+          $data['nama']=$nama;
+          $data['prodi']=$prodi;
+          return response()->json($data);
+        }else{
+          return response()->json(['status'=>400,'message'=>'error 1','result'=>$update]);
+        }
+      }else{
+        return response()->json(['status'=>400,'message'=>'error 2','result'=>$query]);
+      }
+    }
+
     public function ambil_antrian($id){
       $result = app('db')->select("select * from antrian where status='0' and no_loket='$id'");
       if($result){
@@ -351,6 +423,23 @@ class AntrianController extends Controller
         $data['status']=200;
         $data['message']='success';
         $data['result']=$result;
+        return response()->json($data);
+      }else{
+        $data['status']=400;
+        $data['message']='failed';
+        $data['result']=[];
+        return response()->json($data);
+      }
+    }
+
+    public function ambil_antrian_one($id){
+      $result = app('db')->select("select * from antrian where status='0' and no_loket='$id'");
+      if($result){
+        $no_antrian= $result[0]->no_antrian;
+        $id_antrian = $result[0]->id_antrian;
+        $data['status']=200;
+        $data['message']='success';
+        $data['result']=[$result[0]];
         return response()->json($data);
       }else{
         $data['status']=400;
