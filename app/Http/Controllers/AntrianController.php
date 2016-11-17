@@ -38,7 +38,7 @@ class AntrianController extends Controller
           $counter = join('',file($counter_file));
           trim($counter);
           $counter+=1;
-          DB::update("update temp set id_antrian='0',no_antrian='000'");
+          DB::update("update temp set id_antrian='0',no_antrian='-',nim='',nama=''");
           DB::delete("delete from antrian");
         }
       }else{
@@ -50,7 +50,7 @@ class AntrianController extends Controller
         $counter = join('',file($counter_file));
         trim($counter);
         $counter+=1;
-        DB::update("update temp set id_antrian='0',no_antrian='000'");
+        DB::update("update temp set id_antrian='0',no_antrian='-',nim='',nama=''");
         DB::delete("delete from antrian");
       }
     }
@@ -77,7 +77,7 @@ class AntrianController extends Controller
           $counter = join('',file($counter_file));
           trim($counter);
           $counter+=1;
-          DB::update("update temp set id_antrian='0',no_antrian='000'");
+          DB::update("update temp set id_antrian='0',no_antrian='-',nim='',nama=''");
           DB::delete("delete from antrian");
         }
       }else{
@@ -89,7 +89,7 @@ class AntrianController extends Controller
         $counter = join('',file($counter_file));
         trim($counter);
         $counter+=1;
-        DB::update("update temp set id_antrian='0',no_antrian='000'");
+        DB::update("update temp set id_antrian='0',no_antrian='-',nim='',nama=''");
         DB::delete("delete from antrian");
       }
       $tanggal = date('Y-m-d');
@@ -106,14 +106,14 @@ class AntrianController extends Controller
         $tanggal = date('Y-m-d');
         $waktu   = date('H:i:s');
         $rfid = $request->input('no_rfid');
-        $no_loket = $request->input('no_loket');
+        $id_pelayanan = $request->input('id_pelayanan');
         $noantrian = $request->input('noantrian');
         $counter_file = "counter.txt";
         $fp = fopen($counter_file,"w");
         fputs($fp,(int)$noantrian);
         fclose($fp);
-        $insert = app('db')->insert("insert into antrian(no_antrian,no_rfid,no_loket,tanggal_antrian,waktu_antrian)
-                                    values('$noantrian','$rfid','$no_loket','$tanggal','$waktu')");
+        $insert = app('db')->insert("insert into antrian(no_antrian,no_rfid,id_pelayanan,tanggal_antrian,waktu_antrian)
+                                    values('$noantrian','$rfid','$id_pelayanan','$tanggal','$waktu')");
         if($insert)
         {
           /* tulis dan buka koneksi ke printer */
@@ -321,7 +321,7 @@ class AntrianController extends Controller
       $sekarang=date("Y-m-d H:i:s");
 
       //update temp
-      $update = app('db')->update("update temp set no_antrian='$no_antrian',id_antrian='$id_antrian',nim='$nim',nama='$nama' where no_loket='$loket' or no_loket='5'");
+      $update = app('db')->update("update temp set no_antrian='$no_antrian',id_antrian='$id_antrian',nim='$nim',nama='$nama' where no_loket='$loket' or no_loket='9'");
 
       //simpan antrian ke antrian_terlayani
       $query = app('db')->insert("insert into antrian_terlayani set id_antrian='$id_antrian',operator='$operator',tanggal_pelayanan='$sekarang'");
@@ -343,40 +343,7 @@ class AntrianController extends Controller
       }
     }
 
-    public function simpan_iot(Request $request){
-      $id_antrian = $_GET['id_antrian'];
-      $operator   = $_GET['operator'];
-      $loket      = $_GET['loket'];
-      $sekarang = app('db')->select("select * from antrian inner join mahasiswa on antrian.no_rfid=mahasiswa.no_rfid where id_antrian='$id_antrian'");
-      $no_antrian= $sekarang[0]->no_antrian;
-      $id_antrian = $sekarang[0]->id_antrian;
-      $nim = $sekarang[0]->nim;
-      $nama = $sekarang[0]->nama;
-      $prodi = $sekarang[0]->prodi;
-      $sekarang=date("Y-m-d H:i:s");
 
-      //update temp
-      $update = app('db')->update("update temp set no_antrian='$no_antrian',id_antrian='$id_antrian',nim='$nim',nama='$nama' where no_loket='$loket' or no_loket='5'");
-
-      //simpan antrian ke antrian_terlayani
-      $query = app('db')->insert("insert into antrian_terlayani set id_antrian='$id_antrian',operator='$operator',tanggal_pelayanan='$sekarang'");
-      if($query){
-        $update = app('db')->update("update antrian set status='1' where id_antrian='$id_antrian'");
-        if($update){
-          $data['status']=200;
-          $data['message']='success';
-          $data['result']=$no_antrian;
-          $data['nim']=$nim;
-          $data['nama']=$nama;
-          $data['prodi']=$prodi;
-          return response()->json($data);
-        }else{
-          return response()->json(['status'=>400,'message'=>'error 1','result'=>$update]);
-        }
-      }else{
-        return response()->json(['status'=>400,'message'=>'error 2','result'=>$query]);
-      }
-    }
 
     public function simpan2(Request $request){
       $loket      = $_POST['loket'];
@@ -416,7 +383,7 @@ class AntrianController extends Controller
     }
 
     public function ambil_antrian($id){
-      $result = app('db')->select("select * from antrian where status='0' and no_loket='$id'");
+      $result = app('db')->select("select * from antrian where status='0' and id_pelayanan='$id'");
       if($result){
         $no_antrian= $result[0]->no_antrian;
         $id_antrian = $result[0]->id_antrian;
