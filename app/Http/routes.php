@@ -50,10 +50,8 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
   $app->post('/history', 'HistoryController@main');
   $app->post('/historyall', 'HistoryController@all');
   $app->post('/historydetail', 'HistoryController@detail');
-
-  $app->get('simpan/iot','AntrianController@simpan_iot');
   $app->post('simpan2','AntrianController@simpan2');
-  
+
   //history
   $app->get('/history/operator', 'HistoryController@operator');
   $app->get('/history/loket', 'HistoryController@loket');

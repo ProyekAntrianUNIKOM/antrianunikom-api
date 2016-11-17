@@ -23,7 +23,9 @@ class AuthController  extends Controller {
          $username = $request->input('username');
          $password = $request->input('password');
 
-         $results = DB::select("SELECT operator.*,loket.nama_loket FROM operator inner join loket on loket.no_loket=operator.no_loket where username = ?",[$username]);
+         $results = DB::select("SELECT operator.*,loket.no_loket,pelayanan.nama_pelayanan,pelayanan.id_pelayanan FROM operator
+                      inner join loket on loket.no_loket=operator.no_loket
+                      inner join pelayanan on loket.id_pelayanan = pelayanan.id_pelayanan where operator.username = ?",[$username]);
          if(!$results){
              return response()->json(['status'=>400,'message'=>'Username not found','result'=>[]]);
          }
@@ -33,7 +35,6 @@ class AuthController  extends Controller {
          }else{
              return response()->json(['status'=>400,'message'=>'Wrong password','result'=>[]]);
          }
-
      }
 
      public function authadmin(Request $request)
