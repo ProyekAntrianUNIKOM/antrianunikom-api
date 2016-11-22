@@ -87,4 +87,15 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
     $app->post('/video/{id}', 'VideoController@editData');
     $app->get('/video/{id}', 'VideoController@detail');
     $app->delete('/video/{id}', 'VideoController@deleteData');
+
+
+    //pmb
+    //untuk operator
+    $app->get('/getantrianpmb','PmbController@getantrian');
+
+    $app->get('/ambilantrianpmb','PmbController@ambilantrian');
+    $app->post('/antrianpmb/selesai','PmbController@simpan2');
+    $app->get('/cekharipmb','PmbController@cekhari');
+    $app->get('/temppmb','PmbController@getAllTemp');
+
 });
