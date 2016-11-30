@@ -14,19 +14,29 @@ class PelayananController extends Controller
         //
     }
 
-    public function index()
+   
+
+    public function jenispelayanan()
     {
-        $result = app('db')->select("select * from pelayanan");
+        $result = app('db')->select("select * from jenis_pelayanan");
         $data['status']=200;
         $data['message']='success';
         $data['result']=$result;
         return response()->json($data);
     }
 
-    public function loket($id)
+    public function ambilpelayanan($id)
     {
-      $result = app('db')->select("select loket.no_loket,user.nama as operator,loket.nama_loket 
-                                  from loket inner join user on loket.operator = user.id_user where loket.id_pelayanan='$id'");
+      $result = app('db')->select("select id_pelayanan,pelayanan.nama_pelayanan from pelayanan inner join jenis_pelayanan on jenis_pelayanan.id_jenispelayanan=pelayanan.id_jenispelayanan where pelayanan.id_jenispelayanan='$id'");
+      $data['status']=200;
+      $data['message']='success';
+      $data['result']=$result;
+      return response()->json($data);
+    }
+
+    public function ambilsubpelayanan($id)
+    {
+        $result = app('db')->select("select id_subpelayanan,nama_subpelayanan from sub_pelayanan inner join pelayanan on pelayanan.id_pelayanan = sub_pelayanan.id_pelayanan where sub_pelayanan.id_pelayanan='$id'");
       $data['status']=200;
       $data['message']='success';
       $data['result']=$result;

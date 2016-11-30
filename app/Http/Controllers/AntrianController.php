@@ -25,9 +25,9 @@ class AntrianController extends Controller
     public function cekhari()
     {
       $sekarang=date('d');
-      $data = app('db')->select("select max(tanggal_antrian) as akhir from antrian");
-      $jumlah = app('db')->table('antrian')->count();
-      if($jumlah>0){
+      // $data = app('db')->select("select max(tanggal_antrian) as akhir from antrian_student");
+      // $jumlah = app('db')->table('antrian_student')->count();
+      // if($jumlah>0){
         $date = DateTime::createFromFormat("Y-m-d", $data[0]->akhir);
         if($sekarang!=$date->format("d")){
           $counter_file = "counter.txt";
@@ -39,28 +39,43 @@ class AntrianController extends Controller
           trim($counter);
           $counter+=1;
           DB::update("update temp set id_antrian='0',no_antrian='-',nim='',nama=''");
-          DB::delete("delete from antrian");
+          DB::delete("delete from antrian_student");
+
+          //reset antrianpmb 
+          DB::update("update temp_pmb set id_antrian='0',no_antrian='-'");
+          DB::update("update temp_pmb set no_loket='0' where id='5'");
+          DB::delete("delete from antrian_pmb");
+          
+          $counter_file = "counterpmb.txt";
+          $fp = fopen($counter_file,"w");
+          fputs($fp,0);
+          fclose($fp);
+          $counter_file = "counterpmb.txt";
+          $counter = join('',file($counter_file));
+          trim($counter);
+          $counter+=1; 
+      //   }
+      // }else{
+      //   $counter_file = "counter.txt";
+      //   $fp = fopen($counter_file,"w");
+      //   fputs($fp,0);
+      //   fclose($fp);
+      //   $counter_file = "counter.txt";
+      //   $counter = join('',file($counter_file));
+      //   trim($counter);
+      //   $counter+=1;
+      //   DB::update("update temp set id_antrian='0',no_antrian='-',nim='',nama=''");
+      //   DB::delete("delete from antrian_student");
+      // }
         }
-      }else{
-        $counter_file = "counter.txt";
-        $fp = fopen($counter_file,"w");
-        fputs($fp,0);
-        fclose($fp);
-        $counter_file = "counter.txt";
-        $counter = join('',file($counter_file));
-        trim($counter);
-        $counter+=1;
-        DB::update("update temp set id_antrian='0',no_antrian='-',nim='',nama=''");
-        DB::delete("delete from antrian");
-      }
     }
 
 
-    public function ambilakhir()
+    public function ambilakhirstudent()
     {
       $sekarang=date('d');
-      $data = app('db')->select("select max(tanggal_antrian) as akhir from antrian");
-      $jumlah = app('db')->table('antrian')->count();
+      $data = app('db')->select("select max(tanggal_antrian) as akhir from antrian_student");
+      $jumlah = app('db')->table('antrian_student')->count();
       if($jumlah>0){
         $date = DateTime::createFromFormat("Y-m-d", $data[0]->akhir);
         if($sekarang==$date->format("d")){
@@ -78,7 +93,7 @@ class AntrianController extends Controller
           trim($counter);
           $counter+=1;
           DB::update("update temp set id_antrian='0',no_antrian='-',nim='',nama=''");
-          DB::delete("delete from antrian");
+          DB::delete("delete from antrian_student");
         }
       }else{
         $counter_file = "counter.txt";
@@ -90,7 +105,7 @@ class AntrianController extends Controller
         trim($counter);
         $counter+=1;
         DB::update("update temp set id_antrian='0',no_antrian='-',nim='',nama=''");
-        DB::delete("delete from antrian");
+        DB::delete("delete from antrian_student");
       }
       $tanggal = date('Y-m-d');
       $waktu   = date('H:i:s');
@@ -106,14 +121,15 @@ class AntrianController extends Controller
         $tanggal = date('Y-m-d');
         $waktu   = date('H:i:s');
         $rfid = $request->input('no_rfid');
-        $id_pelayanan = $request->input('id_pelayanan');
+        $id_jenispelayanan = $request->input('id_jenispelayanan');
         $noantrian = $request->input('noantrian');
+        $nama_pelayanan = $request->input('nama_pelayanan');
         $counter_file = "counter.txt";
         $fp = fopen($counter_file,"w");
         fputs($fp,(int)$noantrian);
         fclose($fp);
-        $insert = app('db')->insert("insert into antrian(no_antrian,no_rfid,id_pelayanan,tanggal_antrian,waktu_antrian)
-                                    values('$noantrian','$rfid','$id_pelayanan','$tanggal','$waktu')");
+        $insert = app('db')->insert("insert into antrian_student(no_antrian,no_rfid,id_jenispelayanan,nama_pelayanan,tanggal_antrian,waktu_antrian)
+                                    values('$noantrian','$rfid','$id_jenispelayanan','$nama_pelayanan','$tanggal','$waktu')");
         if($insert)
         {
           /* tulis dan buka koneksi ke printer */
@@ -308,32 +324,53 @@ class AntrianController extends Controller
 
     }
 
-    public function simpan(Request $request){
+    public function update_terlayani(Request $request){
       $id_antrian = $request->input('id_antrian');
+      $sekarang = date("H:i:s");
+      $update = app('db')->update("update antrian_terlayani set waktu_selesai_pelayanan='$sekarang' where id='$id_antrian'");
+      if($update){
+        return response()->json(['status'=>200,'message'=>'success','result'=>[]]);
+      }
+    }
+
+
+    public function simpan(Request $request,$sequence = null){
       $operator   = $request->input('operator');
       $loket      = $request->input('loket');
-      $sekarang = app('db')->select("select * from antrian inner join mahasiswa on antrian.no_rfid=mahasiswa.no_rfid where id_antrian='$id_antrian'");
+      $id_antrian = $request->input('id_antrian');
+      $pdo = DB::connection()->getPdo();
+
+      $sekarang = app('db')->select("select * from antrian_student inner join mahasiswa on antrian_student.no_rfid=mahasiswa.no_rfid where antrian_student.id_antrian='$id_antrian'");
+      $norfid = $sekarang[0]->no_rfid;
       $no_antrian= $sekarang[0]->no_antrian;
-      $id_antrian = $sekarang[0]->id_antrian;
       $nim = $sekarang[0]->nim;
       $nama = $sekarang[0]->nama;
       $prodi = $sekarang[0]->prodi;
-      $sekarang=date("Y-m-d H:i:s");
+
+      $tglsekarang=date("Y-m-d");
+      $waktu_sekarang=date("H:i:s");
+      $nama_pelayanan = $sekarang[0]->nama_pelayanan;
+      $id_jenispelayanan = $sekarang[0]->id_jenispelayanan;
 
       //update temp
       $update = app('db')->update("update temp set no_antrian='$no_antrian',id_antrian='$id_antrian',nim='$nim',nama='$nama',no_loket='$loket' where no_loket='$loket' or id='9'");
 
       //simpan antrian ke antrian_terlayani
-      $query = app('db')->insert("insert into antrian_terlayani set id_antrian='$id_antrian',operator='$operator',tanggal_pelayanan='$sekarang'");
+      $query = DB::insert("insert into antrian_terlayani set no_antrian='$no_antrian',no_rfid='$norfid',operator='$operator',id_jenispelayanan='$id_jenispelayanan',tanggal_pelayanan='$tglsekarang',waktu_pelayanan='$waktu_sekarang'");
+        $id = $pdo->lastInsertId();
+      
       if($query){
-        $update = app('db')->update("update antrian set status='1' where id_antrian='$id_antrian'");
+        $update = app('db')->update("update antrian_student set status='1' where id_antrian='$id_antrian'");
         if($update){
           $data['status']=200;
           $data['message']='success';
           $data['result']=$no_antrian;
+          $data['id_antrian']=$id;
+        
           $data['nim']=$nim;
           $data['nama']=$nama;
           $data['prodi']=$prodi;
+          $data['nama_pelayanan']=$nama_pelayanan; 
           return response()->json($data);
         }else{
           return response()->json(['status'=>400,'message'=>'error 1','result'=>$update]);
@@ -383,7 +420,7 @@ class AntrianController extends Controller
     }
 
     public function ambil_antrian($id){
-      $result = app('db')->select("select * from antrian where status='0' and id_pelayanan='$id'");
+      $result = app('db')->select("select * from antrian_student where status='0' and id_jenispelayanan='$id'");
       if($result){
         $no_antrian= $result[0]->no_antrian;
         $id_antrian = $result[0]->id_antrian;
