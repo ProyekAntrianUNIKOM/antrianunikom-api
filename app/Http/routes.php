@@ -90,6 +90,8 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
     $app->get('/video/{id}', 'VideoController@detail');
     $app->delete('/video/{id}', 'VideoController@deleteData');
 
+    //reset antrian 
+    $app->get('/resetantrian/student','AntrianController@reset_antrian_student');
 
     //pmb
     //untuk operator

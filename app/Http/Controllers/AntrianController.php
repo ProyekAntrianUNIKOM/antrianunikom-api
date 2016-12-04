@@ -7,6 +7,8 @@ use SplQueue;
 use Illuminate\Http\Request;
 use DB;
 
+date_default_timezone_set("Asia/Jakarta");
+
 class AntrianController extends Controller
 {
 
@@ -39,6 +41,7 @@ class AntrianController extends Controller
           trim($counter);
           $counter+=1;
           DB::update("update temp set id_antrian='0',no_antrian='-',nim='',nama=''");
+          DB::update("update temp set no_loket='' where id='9'");
           DB::delete("delete from antrian_student");
 
           //reset antrianpmb 
@@ -54,22 +57,24 @@ class AntrianController extends Controller
           $counter = join('',file($counter_file));
           trim($counter);
           $counter+=1; 
-      //   }
-      // }else{
-      //   $counter_file = "counter.txt";
-      //   $fp = fopen($counter_file,"w");
-      //   fputs($fp,0);
-      //   fclose($fp);
-      //   $counter_file = "counter.txt";
-      //   $counter = join('',file($counter_file));
-      //   trim($counter);
-      //   $counter+=1;
-      //   DB::update("update temp set id_antrian='0',no_antrian='-',nim='',nama=''");
-      //   DB::delete("delete from antrian_student");
-      // }
         }
     }
 
+    public function reset_antrian_student()
+    {
+          $counter_file = "counter.txt";
+          $fp = fopen($counter_file,"w");
+          fputs($fp,0);
+          fclose($fp);
+          $counter_file = "counter.txt";
+          $counter = join('',file($counter_file));
+          trim($counter);
+          $counter+=1;
+          DB::update("update temp set id_antrian='0',no_antrian='-',nim='',nama=''");
+          DB::update("update temp set no_loket='' where id='9'");
+          DB::delete("delete from antrian_student");
+          return response()->json(['status'=>200,'message'=>'success','result'=>[]]);
+    }
 
     public function ambilakhirstudent()
     {
