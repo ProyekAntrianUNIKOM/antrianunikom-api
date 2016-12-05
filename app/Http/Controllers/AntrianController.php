@@ -44,11 +44,11 @@ class AntrianController extends Controller
           DB::update("update temp set no_loket='' where id='9'");
           DB::delete("delete from antrian_student");
 
-          //reset antrianpmb 
+          //reset antrianpmb
           DB::update("update temp_pmb set id_antrian='0',no_antrian='-'");
           DB::update("update temp_pmb set no_loket='0' where id='5'");
           DB::delete("delete from antrian_pmb");
-          
+
           $counter_file = "counterpmb.txt";
           $fp = fopen($counter_file,"w");
           fputs($fp,0);
@@ -56,7 +56,7 @@ class AntrianController extends Controller
           $counter_file = "counterpmb.txt";
           $counter = join('',file($counter_file));
           trim($counter);
-          $counter+=1; 
+          $counter+=1;
         }
     }
 
@@ -361,9 +361,9 @@ class AntrianController extends Controller
       $update = app('db')->update("update temp set no_antrian='$no_antrian',id_antrian='$id_antrian',nim='$nim',nama='$nama',no_loket='$loket' where no_loket='$loket' or id='9'");
 
       //simpan antrian ke antrian_terlayani
-      $query = DB::insert("insert into antrian_terlayani set no_antrian='$no_antrian',no_rfid='$norfid',operator='$operator',id_jenispelayanan='$id_jenispelayanan',tanggal_pelayanan='$tglsekarang',waktu_pelayanan='$waktu_sekarang'");
+      $query = DB::insert("insert into antrian_terlayani set no_loket='$loket',no_antrian='$no_antrian',no_rfid='$norfid',operator='$operator',id_jenispelayanan='$id_jenispelayanan',tanggal_pelayanan='$tglsekarang',waktu_pelayanan='$waktu_sekarang'");
         $id = $pdo->lastInsertId();
-      
+
       if($query){
         $update = app('db')->update("update antrian_student set status='1' where id_antrian='$id_antrian'");
         if($update){
@@ -371,11 +371,11 @@ class AntrianController extends Controller
           $data['message']='success';
           $data['result']=$no_antrian;
           $data['id_antrian']=$id;
-        
+
           $data['nim']=$nim;
           $data['nama']=$nama;
           $data['prodi']=$prodi;
-          $data['nama_pelayanan']=$nama_pelayanan; 
+          $data['nama_pelayanan']=$nama_pelayanan;
           return response()->json($data);
         }else{
           return response()->json(['status'=>400,'message'=>'error 1','result'=>$update]);
