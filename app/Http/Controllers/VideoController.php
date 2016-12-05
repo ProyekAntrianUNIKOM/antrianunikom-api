@@ -72,7 +72,7 @@ class VideoController extends Controller
         //hapus foto sebelumnya
         $a = '../public/banner/'.$oldfile;
         unlink($a);
-        
+
         $fileName = $rand.'-'.$video->getClientOriginalName();
         $request->file('file')->move('video', $fileName);
       }else{
