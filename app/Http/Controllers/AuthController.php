@@ -23,9 +23,9 @@ class AuthController  extends Controller {
          $username = $request->input('username');
          $password = $request->input('password');
 
-         $results = DB::select("SELECT operator.*,loket.no_loket,pelayanan.nama_pelayanan,pelayanan.id_pelayanan FROM operator
+         $results = DB::select("SELECT operator.*,loket.no_loket,jenis_pelayanan.nama_pelayanan,jenis_pelayanan.id_jenispelayanan FROM operator
                       inner join loket on loket.no_loket=operator.no_loket
-                      inner join pelayanan on loket.id_pelayanan = pelayanan.id_pelayanan where operator.username = ?",[$username]);
+                      inner join jenis_pelayanan on loket.id_jenispelayanan = jenis_pelayanan.id_jenispelayanan where operator.username = ?",[$username]);
          if(!$results){
              return response()->json(['status'=>400,'message'=>'Username not found','result'=>[]]);
          }

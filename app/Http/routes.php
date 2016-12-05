@@ -24,11 +24,13 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
   $app->get('operator','PelayananController@operator');
 
   $app->get('loket','PelayananController@getLoket');
-  $app->get('pelayanan','PelayananController@index');
-  $app->get('loket/{id}','AntrianController@loket');
-  $app->post('antrian','AntrianController@tambah');
-  $app->get('antrian/ambil','AntrianController@ambil');
+  $app->get('pelayanan/{id}','PelayananController@ambilpelayanan');
+  $app->get('subpelayanan/{id}','PelayananController@ambilsubpelayanan');
+  $app->get('jenispelayanan','PelayananController@jenispelayanan');
 
+  $app->post('simpanantrian','AntrianController@tambah');
+  $app->get('antrian/ambil','AntrianController@ambil');
+  $app->post('antrian/terlayani','AntrianController@update_terlayani');
   $app->post('auth', 'AuthController@postlogin');
   $app->post('register','AuthController@register');
   $app->get('getakhir/{id}','AntrianController@ambil_antrian_one');
@@ -37,7 +39,7 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
   $app->get('temp','AntrianController@getAllTemp');
   $app->get('temp/{id}','AntrianController@getTempByid');
   $app->get('button','AntrianController@button');
-  $app->get('ambilakhir','AntrianController@ambilakhir');
+  $app->get('ambilakhirstudent','AntrianController@ambilakhirstudent');
   $app->get('cekhari','AntrianController@cekhari');
 
   $app->get('ambil','TestingController@ambil');
@@ -88,14 +90,11 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
     $app->get('/video/{id}', 'VideoController@detail');
     $app->delete('/video/{id}', 'VideoController@deleteData');
 
+    //reset antrian 
+    $app->get('/resetantrian/student','AntrianController@reset_antrian_student');
 
     //pmb
     //untuk operator
-    $app->get('/getantrianpmb','PmbController@getantrian');
-
     $app->get('/ambilantrianpmb','PmbController@ambilantrian');
-    $app->post('/antrianpmb/selesai','PmbController@simpan2');
-    $app->get('/cekharipmb','PmbController@cekhari');
-    $app->get('/temppmb','PmbController@getAllTemp');
 
 });
