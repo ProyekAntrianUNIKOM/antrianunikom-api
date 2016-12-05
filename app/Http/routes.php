@@ -90,11 +90,16 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
     $app->get('/video/{id}', 'VideoController@detail');
     $app->delete('/video/{id}', 'VideoController@deleteData');
 
-    //reset antrian 
+    //reset antrian
     $app->get('/resetantrian/student','AntrianController@reset_antrian_student');
 
     //pmb
     //untuk operator
     $app->get('/ambilantrianpmb','PmbController@ambilantrian');
+    $app->get('/antrianpmb/temp','PmbController@getAllTemp');
+    $app->post('/antrianpmb/auth','AuthController@auth_pmb');
+    $app->get('/antrianpmb/getantrian','PmbController@getantrian');
+    $app->post('/antrianpmb/selesai','PmbController@simpan');
+    $app->post('/antrianpmb/terlayani','PmbController@terlayani');
 
 });

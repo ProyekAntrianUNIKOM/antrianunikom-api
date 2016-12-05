@@ -115,6 +115,21 @@ class PmbController extends Controller
       }
     }
 
+    public function getAllTemp(){
+      $result = app('db')->select("select * from temp_pmb");
+      $data['status']=200;
+      $data['message']='success';
+      $data['result']=$result;
+      return response()->json($data);
+    }
+
+    public function getantrian(){
+      $result = app('db')->select("select * from antrian_pmb where status='0'");
+      $data['status']=200;
+      $data['message']='success';
+      $data['result']=$result;
+      return response()->json($data);
+    }
 
     public function tambah(Request $request)
     {
@@ -197,6 +212,48 @@ class PmbController extends Controller
         }
     }
 
+    public function simpan(Request $request,$sequence = null){
+      $operator   = $request->input('operator');
+      $loket      = $request->input('loket');
+      $id_antrian = $request->input('id_antrian');
+      $pdo = DB::connection()->getPdo();
 
-    
+      $sekarang = app('db')->select("select * from antrian_pmb where id_antrian='$id_antrian'");
+      $no_antrian= $sekarang[0]->no_antrian;
+
+      $tglsekarang=date("Y-m-d");
+      $waktu_sekarang=date("H:i:s");
+
+      //update temp
+      $update = app('db')->update("update temp_pmb set no_antrian='$no_antrian',id_antrian='$id_antrian',no_loket='$loket' where no_loket='$loket' or id='8'");
+
+      //simpan antrian ke antrian_terlayani
+      $query = DB::insert("insert into selesai_pmb set no_loket='$loket',no_antrian='$no_antrian',id_operator='$operator',tanggal_pelayanan='$tglsekarang',waktu_pelayanan='$waktu_sekarang'");
+      $id = $pdo->lastInsertId();
+      if($query){
+        $update = app('db')->update("update antrian_pmb set status='1' where id_antrian='$id_antrian'");
+        if($update){
+          $data['status']=200;
+          $data['message']='success';
+          $data['result']=$no_antrian;
+          $data['id_antrian']=$id;
+          return response()->json($data);
+        }else{
+          return response()->json(['status'=>400,'message'=>'error 1','result'=>$update]);
+        }
+      }else{
+        return response()->json(['status'=>400,'message'=>'error 2','result'=>$query]);
+      }
+    }
+
+    public function terlayani(Request $request)
+    {
+      $id_antrian = $request->input('id_antrian');
+      $sekarang = date("H:i:s");
+      $update = app('db')->update("update selesai_pmb set waktu_selesai_pelayanan='$sekarang' where id='$id_antrian'");
+      if($update){
+        return response()->json(['status'=>200,'message'=>'success','result'=>[]]);
+      }
+
+    }
 }
