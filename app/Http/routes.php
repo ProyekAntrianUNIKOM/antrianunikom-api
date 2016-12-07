@@ -57,6 +57,7 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
   //history
   $app->get('/history/operator', 'HistoryController@operator');
   $app->get('/history/loket', 'HistoryController@loket');
+  $app->post('/history/pelayanan', 'HistoryController@pelayanan');
   $app->post('/history', 'HistoryController@main');
   $app->post('/historyall', 'HistoryController@all');
   $app->post('/historydetail', 'HistoryController@detail');
@@ -90,7 +91,7 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
     $app->get('/video/{id}', 'VideoController@detail');
     $app->delete('/video/{id}', 'VideoController@deleteData');
 
-    //reset antrian 
+    //reset antrian
     $app->get('/resetantrian/student','AntrianController@reset_antrian_student');
 
     //pmb

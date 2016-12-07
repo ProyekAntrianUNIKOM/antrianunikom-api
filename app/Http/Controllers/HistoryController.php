@@ -167,24 +167,24 @@ class HistoryController extends Controller
         return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
       }else{
         $stat = DB::select("SELECT operator.nama as nama_operator, count(id) as jumlah,YEAR(tanggal_pelayanan) as tahun FROM antrian_terlayani
-        LEFT JOIN operator on operator.no_loket=antrian_terlayani.no_loket
+        LEFT JOIN operator on operator.id_operator=antrian_terlayani.operator
         GROUP BY operator.id_operator");
         return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
       }
     }
 
     public function operator() {
-      $stat = DB::select("SELECT id_operator,operator.nama as nama_operator,pelayanan.nama_pelayanan,loket.no_loket FROM operator
+      $stat = DB::select("SELECT id_operator,operator.nama as nama_operator,jenis_pelayanan.nama_pelayanan,loket.no_loket FROM operator
       INNER JOIN loket on operator.no_loket=loket.no_loket
-      INNER JOIN pelayanan on pelayanan.id_pelayanan=loket.id_pelayanan");
+      INNER JOIN jenis_pelayanan on jenis_pelayanan.id_jenispelayanan=loket.id_jenispelayanan");
       return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
     }
 
     public function loket() {
-      $stat = DB::select("SELECT pelayanan.nama_pelayanan,loket.no_loket,count(antrian_terlayani.no_loket) as jumlah FROM antrian_terlayani
-      RIGHT JOIN loket on loket.no_loket=antrian_terlayani.no_loket
-      RIGHT JOIN pelayanan on pelayanan.id_pelayanan=loket.id_pelayanan
-      GROUP BY loket.no_loket");
+      $stat = DB::select("SELECT jenis_pelayanan.nama_pelayanan,operator.no_loket,count(antrian_terlayani.operator) as jumlah FROM antrian_terlayani
+      RIGHT JOIN operator on operator.id_operator=antrian_terlayani.operator
+      RIGHT JOIN jenis_pelayanan on jenis_pelayanan.id_jenispelayanan=antrian_terlayani.id_jenispelayanan
+      GROUP BY antrian_terlayani.operator");
 
       /*$op = DB::select("SELECT no_loket,operator.nama as nama_operator FROM operator");
 
@@ -195,5 +195,31 @@ class HistoryController extends Controller
       }*/
 
       return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+    }
+
+    public function pelayanan(Request $request) {
+      $tahun = $request->input('tahun');
+      $bulan = $request->input('bulan');
+      $hari = $request->input('hari');
+
+      if($tahun && !$bulan){
+        $stat = DB::select("SELECT jenis_pelayanan.nama_pelayanan,operator.no_loket,count(antrian_terlayani.operator) as jumlah FROM antrian_terlayani
+        RIGHT JOIN operator on operator.id_operator=antrian_terlayani.operator
+        RIGHT JOIN jenis_pelayanan on jenis_pelayanan.id_jenispelayanan=antrian_terlayani.id_jenispelayanan
+        WHERE YEAR(tanggal_pelayanan) = ? GROUP BY antrian_terlayani.id_jenispelayanan",[$tahun]);
+        return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+      }else if($tahun && $bulan){
+        $stat = DB::select("SELECT jenis_pelayanan.nama_pelayanan,operator.no_loket,count(antrian_terlayani.operator) as jumlah FROM antrian_terlayani
+        RIGHT JOIN operator on operator.id_operator=antrian_terlayani.operator
+        RIGHT JOIN jenis_pelayanan on jenis_pelayanan.id_jenispelayanan=antrian_terlayani.id_jenispelayanan
+        WHERE YEAR(tanggal_pelayanan) = ? AND MONTH(tanggal_pelayanan) = ? GROUP BY antrian_terlayani.id_jenispelayanan",[$tahun,$bulan]);
+        return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+      }else{
+        $stat = DB::select("SELECT jenis_pelayanan.nama_pelayanan,operator.no_loket,count(antrian_terlayani.operator) as jumlah FROM antrian_terlayani
+        RIGHT JOIN operator on operator.id_operator=antrian_terlayani.operator
+        RIGHT JOIN jenis_pelayanan on jenis_pelayanan.id_jenispelayanan=antrian_terlayani.id_jenispelayanan
+        GROUP BY antrian_terlayani.id_jenispelayanan");
+        return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+      }
     }
 }
