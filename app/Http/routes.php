@@ -62,6 +62,10 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
   $app->post('/historyall', 'HistoryController@all');
   $app->post('/historydetail', 'HistoryController@detail');
 
+  //history PMB
+  $app->post('/pmb/history/operator', 'HistoryController@operatorPMB');
+  $app->post('/pmb/history/loket', 'HistoryController@loketPMB');
+
   //berita
     $app->get('/berita', 'BeritaController@getAll');
     $app->get('/berita/active', 'BeritaController@getActive');

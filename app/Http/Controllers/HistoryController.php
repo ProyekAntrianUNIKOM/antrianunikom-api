@@ -173,6 +173,29 @@ class HistoryController extends Controller
       }
     }
 
+    public function operatorPMB(Request $request) {
+      $tahun = $request->input('tahun');
+      $bulan = $request->input('bulan');
+      $hari = $request->input('hari');
+
+      if($tahun && !$bulan){
+        $stat = DB::select("SELECT operator_pmb.nama as nama_operator, count(id) as jumlah,YEAR(tanggal_pelayanan) as tahun FROM selesai_pmb
+        LEFT JOIN operator_pmb on operator_pmb.id_operator=selesai_pmb.id_operator
+        WHERE YEAR(tanggal_pelayanan) = ? GROUP BY operator_pmb.id_operator",[$tahun]);
+        return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+      }else if($tahun && $bulan){
+        $stat = DB::select("SELECT operator_pmb.nama as nama_operator, count(id) as jumlah,YEAR(tanggal_pelayanan) as tahun FROM selesai_pmb
+        LEFT JOIN operator_pmb on operator_pmb.no_loket=selesai_pmb.no_loket
+        WHERE YEAR(tanggal_pelayanan) = ? AND MONTH(tanggal_pelayanan) = ? GROUP BY operator_pmb.id_operator",[$tahun,$bulan]);
+        return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+      }else{
+        $stat = DB::select("SELECT operator_pmb.nama as nama_operator, count(id) as jumlah,YEAR(tanggal_pelayanan) as tahun FROM selesai_pmb
+        RIGHT JOIN operator_pmb on operator_pmb.id_operator=selesai_pmb.id_operator
+        GROUP BY operator_pmb.id_operator");
+        return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+      }
+    }
+
     public function operator() {
       $stat = DB::select("SELECT id_operator,operator.nama as nama_operator,jenis_pelayanan.nama_pelayanan,loket.no_loket FROM operator
       INNER JOIN loket on operator.no_loket=loket.no_loket
@@ -219,6 +242,26 @@ class HistoryController extends Controller
         RIGHT JOIN operator on operator.id_operator=antrian_terlayani.operator
         RIGHT JOIN jenis_pelayanan on jenis_pelayanan.id_jenispelayanan=antrian_terlayani.id_jenispelayanan
         GROUP BY antrian_terlayani.id_jenispelayanan");
+        return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+      }
+    }
+
+    public function loketPMB(Request $request) {
+      $tahun = $request->input('tahun');
+      $bulan = $request->input('bulan');
+      $hari = $request->input('hari');
+
+      if($tahun && !$bulan){
+        $stat = DB::select("SELECT no_loket,count(selesai_pmb.id_operator) as jumlah FROM selesai_pmb
+        WHERE YEAR(tanggal_pelayanan) = ? GROUP BY selesai_pmb.no_loket",[$tahun]);
+        return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+      }else if($tahun && $bulan){
+        $stat = DB::select("SELECT no_loket,count(selesai_pmb.id_operator) as jumlah FROM selesai_pmb
+        WHERE YEAR(tanggal_pelayanan) = ? AND MONTH(tanggal_pelayanan) = ? GROUP BY selesai_pmb.no_loket",[$tahun,$bulan]);
+        return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+      }else{
+        $stat = DB::select("SELECT no_loket,count(selesai_pmb.id_operator) as jumlah FROM selesai_pmb
+        GROUP BY selesai_pmb.no_loket");
         return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
       }
     }
