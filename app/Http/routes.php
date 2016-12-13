@@ -56,7 +56,8 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
 
   //history
   $app->get('/history/operator', 'HistoryController@operator');
-  $app->get('/history/loket', 'HistoryController@loket');
+  $app->get('/history/operator/waktu_melayani', 'HistoryController@operatorRataWaktuMelayani');
+  $app->post('/history/loket', 'HistoryController@loket');
   $app->post('/history/pelayanan', 'HistoryController@pelayanan');
   $app->post('/history', 'HistoryController@main');
   $app->post('/historyall', 'HistoryController@all');
@@ -101,5 +102,10 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
     //pmb
     //untuk operator
     $app->get('/ambilantrianpmb','PmbController@ambilantrian');
+    $app->get('/antrianpmb/temp','PmbController@getAllTemp');
+    $app->post('/antrianpmb/auth','AuthController@auth_pmb');
+    $app->get('/antrianpmb/getantrian','PmbController@getantrian');
+    $app->post('/antrianpmb/selesai','PmbController@simpan');
+    $app->post('/antrianpmb/terlayani','PmbController@terlayani');
 
 });

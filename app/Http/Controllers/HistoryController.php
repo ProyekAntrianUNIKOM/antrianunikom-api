@@ -203,11 +203,37 @@ class HistoryController extends Controller
       return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
     }
 
-    public function loket() {
-      $stat = DB::select("SELECT jenis_pelayanan.nama_pelayanan,operator.no_loket,count(antrian_terlayani.operator) as jumlah FROM antrian_terlayani
-      RIGHT JOIN operator on operator.id_operator=antrian_terlayani.operator
-      RIGHT JOIN jenis_pelayanan on jenis_pelayanan.id_jenispelayanan=antrian_terlayani.id_jenispelayanan
-      GROUP BY antrian_terlayani.operator");
+    public function operatorRataWaktuMelayani() {
+      $stat = DB::select("SELECT operator.nama,SEC_TO_TIME(AVG(TIME_TO_SEC(timediff(waktu_selesai_pelayanan,waktu_pelayanan)))) as rata_waktu_melayani
+      FROM antrian_terlayani INNER JOIN operator on operator.id_operator=antrian_terlayani.operator GROUP BY operator");
+      return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+    }
+
+    public function loket(Request $request) {
+      $tahun = $request->input('tahun');
+      $bulan = $request->input('bulan');
+      $hari = $request->input('hari');
+
+      if($tahun && !$bulan){
+        $stat = DB::select("SELECT jenis_pelayanan.nama_pelayanan,operator.no_loket,count(antrian_terlayani.operator) as jumlah FROM antrian_terlayani
+        RIGHT JOIN operator on operator.id_operator=antrian_terlayani.operator
+        RIGHT JOIN jenis_pelayanan on jenis_pelayanan.id_jenispelayanan=antrian_terlayani.id_jenispelayanan
+        WHERE YEAR(tanggal_pelayanan) = ? GROUP BY antrian_terlayani.operator",[$tahun]);
+        return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+      }else if($tahun && $bulan){
+        $stat = DB::select("SELECT jenis_pelayanan.nama_pelayanan,operator.no_loket,count(antrian_terlayani.operator) as jumlah FROM antrian_terlayani
+        RIGHT JOIN operator on operator.id_operator=antrian_terlayani.operator
+        RIGHT JOIN jenis_pelayanan on jenis_pelayanan.id_jenispelayanan=antrian_terlayani.id_jenispelayanan
+        WHERE YEAR(tanggal_pelayanan) = ? AND MONTH(tanggal_pelayanan) = ? GROUP BY antrian_terlayani.operator",[$tahun,$bulan]);
+        return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+      }else{
+        $stat = DB::select("SELECT jenis_pelayanan.nama_pelayanan,operator.no_loket,count(antrian_terlayani.operator) as jumlah FROM antrian_terlayani
+        RIGHT JOIN operator on operator.id_operator=antrian_terlayani.operator
+        RIGHT JOIN jenis_pelayanan on jenis_pelayanan.id_jenispelayanan=antrian_terlayani.id_jenispelayanan
+        GROUP BY antrian_terlayani.operator");
+        return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
+      }
+
 
       /*$op = DB::select("SELECT no_loket,operator.nama as nama_operator FROM operator");
 
@@ -216,8 +242,6 @@ class HistoryController extends Controller
           $stat[$i].nama_operator == $op[$i].nama_operator;
         }
       }*/
-
-      return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
     }
 
     public function pelayanan(Request $request) {
