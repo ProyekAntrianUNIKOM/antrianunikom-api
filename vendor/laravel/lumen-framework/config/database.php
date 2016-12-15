@@ -60,7 +60,6 @@ return [
         'mysql' => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST', 'localhost'),
-<<<<<<< HEAD
             // 'host'      => env('DB_HOST', 'ap-cdbr-azure-east-a.cloudapp.net'),
             // 'port'      => env('DB_PORT', 3306),
             'database'  => env('DB_DATABASE', 'antrianunikom'),
@@ -69,12 +68,6 @@ return [
             //'database'  => env('DB_DATABASE', 'acsm_42ceb5468317788'),
             // 'username'  => env('DB_USERNAME', 'b2bcd87dfe9329'),
             // 'password'  => env('DB_PASSWORD', '40b30a3b'),
-=======
-            'port'      => env('DB_PORT', 3306),
-            'database'  => env('DB_DATABASE', 'antrianunikom'),
-            'username'  => env('DB_USERNAME', 'root'),
-            'password'  => env('DB_PASSWORD', ''),
->>>>>>> 1b02a455e688f619e9ed8522afc8b6aa1a1945f2
             'charset'   => env('DB_CHARSET', 'utf8'),
             'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
             'prefix'    => env('DB_PREFIX', ''),

@@ -167,30 +167,12 @@ class HistoryController extends Controller
         return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
       }else{
         $stat = DB::select("SELECT operator.nama as nama_operator, count(id) as jumlah,YEAR(tanggal_pelayanan) as tahun FROM antrian_terlayani
-<<<<<<< HEAD
-        LEFT JOIN operator on operator.no_loket=antrian_terlayani.no_loket
-=======
         LEFT JOIN operator on operator.id_operator=antrian_terlayani.operator
->>>>>>> 1b02a455e688f619e9ed8522afc8b6aa1a1945f2
         GROUP BY operator.id_operator");
         return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
       }
     }
 
-<<<<<<< HEAD
-    public function operator() {
-      $stat = DB::select("SELECT id_operator,operator.nama as nama_operator,pelayanan.nama_pelayanan,loket.no_loket FROM operator
-      INNER JOIN loket on operator.no_loket=loket.no_loket
-      INNER JOIN pelayanan on pelayanan.id_pelayanan=loket.id_pelayanan");
-      return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
-    }
-
-    public function loket() {
-      $stat = DB::select("SELECT pelayanan.nama_pelayanan,loket.no_loket,count(antrian_terlayani.no_loket) as jumlah FROM antrian_terlayani
-      RIGHT JOIN loket on loket.no_loket=antrian_terlayani.no_loket
-      RIGHT JOIN pelayanan on pelayanan.id_pelayanan=loket.id_pelayanan
-      GROUP BY loket.no_loket");
-=======
     public function operatorPMB(Request $request) {
       $tahun = $request->input('tahun');
       $bulan = $request->input('bulan');
@@ -252,7 +234,6 @@ class HistoryController extends Controller
         return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
       }
 
->>>>>>> 1b02a455e688f619e9ed8522afc8b6aa1a1945f2
 
       /*$op = DB::select("SELECT no_loket,operator.nama as nama_operator FROM operator");
 
@@ -261,10 +242,7 @@ class HistoryController extends Controller
           $stat[$i].nama_operator == $op[$i].nama_operator;
         }
       }*/
-<<<<<<< HEAD
 
-      return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
-=======
     }
 
     public function pelayanan(Request $request) {
@@ -311,6 +289,5 @@ class HistoryController extends Controller
         GROUP BY selesai_pmb.no_loket");
         return response()->json(['status'=> 200, 'messages' => 'success', 'result' => $stat]);
       }
->>>>>>> 1b02a455e688f619e9ed8522afc8b6aa1a1945f2
     }
 }

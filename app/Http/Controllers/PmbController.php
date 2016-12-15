@@ -21,7 +21,6 @@ class PmbController extends Controller
 
     }
 
-<<<<<<< HEAD
     public function survey(){
       $id = $_POST['id'];
       $survey = $_POST['survey'];
@@ -32,9 +31,6 @@ class PmbController extends Controller
         return response()->json(['status'=>400,'message'=>'error','result'=>$survey]);
       }
     }
-=======
-
->>>>>>> 1b02a455e688f619e9ed8522afc8b6aa1a1945f2
     public function cekhari()
     {
       $sekarang=date('d');
