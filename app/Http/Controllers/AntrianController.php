@@ -27,9 +27,15 @@ class AntrianController extends Controller
     public function cekhari()
     {
       $sekarang=date('d');
+<<<<<<< HEAD
        $data = app('db')->select("select max(tanggal_antrian) as akhir from antrian_student");
        $jumlah = app('db')->table('antrian_student')->count();
        if($jumlah>0){
+=======
+      // $data = app('db')->select("select max(tanggal_antrian) as akhir from antrian_student");
+      // $jumlah = app('db')->table('antrian_student')->count();
+      // if($jumlah>0){
+>>>>>>> 1b02a455e688f619e9ed8522afc8b6aa1a1945f2
         $date = DateTime::createFromFormat("Y-m-d", $data[0]->akhir);
         if($sekarang!=$date->format("d")){
           $counter_file = "counter.txt";
@@ -58,7 +64,10 @@ class AntrianController extends Controller
           trim($counter);
           $counter+=1;
         }
+<<<<<<< HEAD
        }
+=======
+>>>>>>> 1b02a455e688f619e9ed8522afc8b6aa1a1945f2
     }
 
     public function reset_antrian_student()

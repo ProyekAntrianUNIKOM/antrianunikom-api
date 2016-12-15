@@ -56,11 +56,24 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
 
   //history
   $app->get('/history/operator', 'HistoryController@operator');
+<<<<<<< HEAD
   $app->get('/history/loket', 'HistoryController@loket');
+=======
+  $app->get('/history/operator/waktu_melayani', 'HistoryController@operatorRataWaktuMelayani');
+  $app->post('/history/loket', 'HistoryController@loket');
+  $app->post('/history/pelayanan', 'HistoryController@pelayanan');
+>>>>>>> 1b02a455e688f619e9ed8522afc8b6aa1a1945f2
   $app->post('/history', 'HistoryController@main');
   $app->post('/historyall', 'HistoryController@all');
   $app->post('/historydetail', 'HistoryController@detail');
 
+<<<<<<< HEAD
+=======
+  //history PMB
+  $app->post('/pmb/history/operator', 'HistoryController@operatorPMB');
+  $app->post('/pmb/history/loket', 'HistoryController@loketPMB');
+
+>>>>>>> 1b02a455e688f619e9ed8522afc8b6aa1a1945f2
   //berita
     $app->get('/berita', 'BeritaController@getAll');
     $app->get('/berita/active', 'BeritaController@getActive');
@@ -102,6 +115,9 @@ $app->group(['prefix' => 'api/v1','namespace' => 'App\Http\Controllers'], functi
     $app->post('/antrianpmb/selesai','PmbController@simpan');
     $app->post('/antrianpmb/terlayani','PmbController@terlayani');
 
+<<<<<<< HEAD
     $app->post('/antrianpmb/survey','PmbController@survey');
 
+=======
+>>>>>>> 1b02a455e688f619e9ed8522afc8b6aa1a1945f2
 });
