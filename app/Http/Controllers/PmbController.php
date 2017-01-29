@@ -116,6 +116,60 @@ class PmbController extends Controller
         fputs($fp,(int)$noantrian);
         fclose($fp);
         return response()->json($hasil);
+
+        if($insert)
+        {
+          /* tulis dan buka koneksi ke printer */
+        $p = printer_open("TM-T82");
+        //$p = false;
+        if($p)
+        {
+          $var_magin_left=40;
+          printer_set_option($p, PRINTER_MODE, "RAW");
+
+          //then the width
+          printer_set_option( $p,PRINTER_RESOLUTION_Y, 940);
+          printer_start_doc($p);
+          printer_start_page($p);
+          printer_set_option($p, PRINTER_PAPER_FORMAT, PRINTER_FORMAT_CUSTOM );
+          printer_set_option($p,PRINTER_PAPER_WIDTH,80);
+          printer_set_option($p,PRINTER_PAPER_LENGTH,80);
+
+          $font = printer_create_font("Arial", 90, 50, PRINTER_FW_MEDIUM, false, false, false, 0);
+          printer_select_font($p, $font);
+          printer_draw_text($p, "ANTRIAN UNIKOM",300,0);
+          //printer_draw_text($p, "",250,20);
+
+          //$pen = printer_create_pen(PRINTER_PEN_SOLID, 1, "000000");
+          //printer_select_pen($p, $pen);
+          $font = printer_create_font("Arial", 80, 40, PRINTER_FW_MEDIUM, false, false, false, 0);
+          printer_select_font($p, $font);
+          //printer_draw_line($p, $var_magin_left, 50, 700, 50);
+          printer_draw_text($p, "No Antrian Anda:", 340, 80);
+
+          $font = printer_create_font("Arial", 300, 80, PRINTER_FW_MEDIUM, false, false, false, 0);
+          printer_select_font($p, $font);
+          printer_draw_text($p, "$noantrian", 420, 160);
+
+          $font = printer_create_font("Arial", 40, 30, PRINTER_FW_NORMAL, false, false, false, 0);
+          printer_select_font($p, $font);
+          printer_draw_text($p, "Waktu Antrian :", $var_magin_left, 500);
+          printer_draw_text($p, date("Y/m/d H:i:s"),$var_magin_left,580);
+          printer_draw_line($p, $var_magin_left, 630, 1300, 630);
+          printer_draw_text($p, "\"Harap nomor antrian ini dibawa ke counter\"", $var_magin_left, 680);
+          printer_draw_text($p, "Terimakasih Atas Kunjungan Anda", 100,750);
+
+
+          printer_delete_font($font);
+
+          printer_end_page($p);
+          printer_end_doc($p);
+
+          //printer_start_doc($p);
+          //printer_start_page($p);
+          printer_close($p);
+        }
+        }
       } else {
         $hasil['status']=400;
         $hasil['message']='error';
@@ -123,6 +177,7 @@ class PmbController extends Controller
         return response()->json($hasil);
       }
     }
+    
 
     public function getAllTemp(){
       $result = app('db')->select("select * from temp_pmb");
@@ -132,12 +187,25 @@ class PmbController extends Controller
       return response()->json($data);
     }
 
-    public function getantrian(){
-      $result = app('db')->select("select * from antrian_pmb where status='0'");
-      $data['status']=200;
-      $data['message']='success';
-      $data['result']=$result;
-      return response()->json($data);
+    public function getantrian($jenis)
+    {
+      return $jenis;
+      if($jenis==2){
+        //bank 
+        $result = app('db')->select("select * from antrian_bank where status='0'");
+        $data['status']=200;
+        $data['message']='success';
+        $data['result']=$result;
+        return response()->json($data);
+      }else{
+        //antrian pmb
+        $result = app('db')->select("select * from antrian_pmb where status='0'");
+        $data['status']=200;
+        $data['message']='success';
+        $data['result']=$result;
+        return response()->json($data);
+      }
+      
     }
 
     public function tambah(Request $request)
